@@ -1,69 +1,200 @@
-# Site Verdict — расширение для Firefox
+# Website Trust Checker
 
-Показывает при заходе на сайт:
-- дату регистрации домена (через публичный RDAP-протокол, аналог WHOIS);
-- репутацию домена по данным VirusTotal (нужен бесплатный API-ключ, см. ниже);
-- похожесть домена на известные крупные сайты (проверка на тайпсквоттинг/фишинг);
-- итоговый вердикт с оценкой доверия 0–100.
+A lightweight browser extension that helps users identify potentially suspicious and fraudulent websites before interacting with them.
 
-## Установка (временная, для разработки/личного использования)
+The extension automatically analyzes the current website and displays a small trust indicator directly on the page.
 
-1. Откройте Firefox → адресная строка → `about:debugging#/runtime/this-firefox`
-2. Нажмите **«Загрузить временное дополнение…»**
-3. Выберите файл `manifest.json` из этой папки
+## Features
 
-Расширение появится в панели инструментов. При переходе на http/https-страницу
-значок изменит цвет:
-- 🟢 зелёный «OK» — сайт выглядит надёжным;
-- 🟡 жёлтый «?» — недостаточно данных / умеренный риск;
-- 🔴 красный «!» — высокий риск.
+* 🔍 **Automatic website analysis** — checks websites when you visit them.
+* 🛡️ **Phishing detection** — identifies domains associated with known phishing activity.
+* 🌐 **Domain analysis** — detects suspicious domain patterns, including typosquatting and look-alike domains.
+* ⚠️ **Non-intrusive warnings** — displays a compact warning without blocking the website.
+* 📊 **Trust indicator** — provides a quick visual indication of the website's status.
+* ⚡ **Lightweight** — designed to perform checks without significantly affecting browsing performance.
 
-Клик по значку открывает подробности.
+## How It Works
 
-> Временные дополнения удаляются при перезапуске Firefox. Для постоянной
-> установки расширение нужно подписать через Mozilla (addons.mozilla.org)
-> или использовать Firefox Developer/Nightly с отключённой проверкой подписи.
+When a page is opened, the extension extracts information about the current website and performs several checks:
 
-## Настройка VirusTotal (необязательно, но рекомендуется)
-
-1. Зарегистрируйтесь на https://www.virustotal.com
-2. В профиле найдите свой **API Key**
-3. Откройте настройки расширения (кнопка «Настройки / API-ключ» в попапе)
-4. Вставьте ключ и сохраните
-
-Без ключа расширение по-прежнему покажет дату регистрации домена и эвристику
-по бренду — просто без блока репутации VirusTotal. Бесплатный ключ имеет лимит
-~4 запроса в минуту, этого достаточно для личного использования.
-
-## Как считается вердикт
-
-Это эвристика, а не гарантия. Оценка складывается из:
-- наличия HTTPS;
-- возраста домена (совсем новые домены — červená flag);
-- совпадения/похожести на список известных сайтов (см. `analyzer.js` →
-  `DEFAULT_KNOWN_BRANDS`, список можно расширить в настройках);
-- данных VirusTotal, если задан API-ключ.
-
-**Важно:** ни один автоматический вердикт не заменяет здравый смысл.
-"Официальность" сайта в общем случае нельзя определить программно на 100% —
-инструмент лишь подсвечивает явные признаки риска (новый домен, тайпсквоттинг,
-отсутствие HTTPS, плохая репутация в VirusTotal).
-
-## Структура файлов
-
-```
-manifest.json     — манифест расширения (Manifest V2, Firefox)
-analyzer.js        — вся логика анализа (RDAP, VirusTotal, тайпсквоттинг, вердикт)
-background.js       — фоновый скрипт: следит за вкладками, запускает анализ, значок
-popup.html/.css/.js — всплывающее окно с результатами
-options.html/.js    — страница настроек (API-ключ, свои домены)
-icons/               — иконки расширения
+```text
+User opens website
+        ↓
+Extract domain
+        ↓
+Check domain reputation
+        ↓
+Analyze domain characteristics
+        ↓
+Calculate result
+        ↓
+Display trust indicator
 ```
 
-## Возможные доработки
+The extension can combine multiple signals rather than relying on a single blacklist.
 
-- Добавить Google Safe Browsing API для второго источника репутации.
-- Кэшировать RDAP-результаты в `storage.local`, чтобы не запрашивать повторно.
-- Добавить проверку SSL-сертификата (issuer, срок действия) через доп. API,
-  так как из content-скрипта эти данные напрямую не получить.
-- Локализовать список брендов под конкретную страну/отрасль.
+For example:
+
+* Known phishing reports
+* Suspicious domain structure
+* Typosquatting
+* Look-alike domains
+* Unusual TLDs
+* Domain reputation
+
+## Example
+
+A legitimate website:
+
+```text
+https://www.microsoft.com
+```
+
+may receive:
+
+```text
+✓ Trusted
+```
+
+A suspicious look-alike domain such as:
+
+```text
+https://microsaft-example.com
+```
+
+may receive:
+
+```text
+⚠ Suspicious
+```
+
+The warning is intended to help users make an informed decision before entering credentials or other sensitive information.
+
+## Installation
+
+### From source
+
+Clone the repository:
+
+```bash
+git clone https://github.com/W1set/extention.git
+cd extention
+```
+
+Then load the extension manually.
+
+### Firefox
+
+1. Open:
+
+```text
+about:debugging#/runtime/this-firefox
+```
+
+2. Select **Load Temporary Add-on**.
+3. Select `manifest.json`.
+4. Open a website and check the extension indicator.
+
+### Chromium-based browsers
+
+1. Open:
+
+```text
+chrome://extensions/
+```
+
+2. Enable **Developer mode**.
+3. Select **Load unpacked**.
+4. Select the project directory.
+
+## Project Structure
+
+```text
+extention/
+├── manifest.json
+├── background.js
+├── analyzer.js
+├── popup.html
+├── popup.js
+├── popup.css
+├── options.html
+└── options.js
+```
+
+### Main Components
+
+| File            | Purpose                                 |
+| --------------- | --------------------------------------- |
+| `manifest.json` | Extension configuration and permissions |
+| `background.js` | Background extension logic              |
+| `analyzer.js`   | Website/domain analysis                 |
+| `popup.html`    | Extension popup interface               |
+| `popup.js`      | Popup functionality                     |
+| `popup.css`     | Popup styling                           |
+| `options.html`  | Settings page                           |
+| `options.js`    | Settings functionality                  |
+
+## Security
+
+This project is designed as a defensive security tool.
+
+It should be treated as an additional security layer rather than a replacement for:
+
+* Browser security mechanisms
+* Antivirus software
+* Password managers
+* MFA
+* DNS/security filtering
+* User verification
+
+A website marked as trusted should **not** be interpreted as guaranteed safe.
+
+Likewise, a suspicious result does not necessarily mean that a website is malicious.
+
+## Testing
+
+For testing, use dedicated security datasets and isolated environments.
+
+Recommended sources include:
+
+* [PhishTank](https://www.phishtank.net/) — phishing URL database
+* [URLhaus](https://urlhaus.abuse.ch/) — malicious URL database
+* Known typosquatting examples
+* Test domains created specifically for development
+
+Do **not** enter real credentials or personal information on suspicious websites during testing.
+
+## Roadmap
+
+* [ ] Improve domain similarity detection
+* [ ] Add typosquatting detection
+* [ ] Add homoglyph detection
+* [ ] Integrate external reputation APIs
+* [ ] Add domain age analysis
+* [ ] Improve trust scoring
+* [ ] Add configurable warning levels
+* [ ] Add local caching of reputation results
+* [ ] Add automated tests
+* [ ] Improve Firefox and Chromium compatibility
+* [ ] Add unit tests for the domain analyzer
+
+## Contributing
+
+Contributions, bug reports and feature requests are welcome.
+
+Before submitting a pull request:
+
+1. Test the extension locally.
+2. Make sure existing functionality still works.
+3. Keep changes focused.
+4. Do not commit API keys or other secrets.
+
+## Disclaimer
+
+This project is provided for educational and defensive security purposes.
+
+No automated website reputation system can guarantee that a website is safe or malicious. Always verify the domain and avoid entering sensitive information when you are unsure.
+
+## License
+
+This project is licensed under the MIT License.
