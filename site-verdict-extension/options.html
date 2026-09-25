@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Site Verdict — настройки</title>
+  <style>
+    body { font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif; max-width: 480px; margin: 20px; font-size: 13px; color: #222; }
+    h1 { font-size: 16px; }
+    label { display: block; margin-top: 14px; font-weight: 600; }
+    input, textarea { width: 100%; padding: 6px; margin-top: 4px; font-size: 13px; box-sizing: border-box; }
+    textarea { height: 80px; }
+    p.hint { color: #777; font-size: 12px; margin: 4px 0 0 0; }
+    button { margin-top: 14px; padding: 8px 14px; cursor: pointer; }
+    #status { margin-left: 10px; color: #1e7e34; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <h1>Настройки Site Verdict</h1>
+
+  <label for="vtApiKey">API-ключ VirusTotal (необязательно)</label>
+  <input type="text" id="vtApiKey" placeholder="вставьте свой бесплатный API-ключ" />
+  <p class="hint">
+    Без ключа расширение всё равно покажет дату регистрации домена и эвристику по бренду,
+    но не сможет запросить репутацию у VirusTotal. Бесплатный ключ можно получить на virustotal.com
+    после регистрации (раздел API Key в профиле).
+  </p>
+
+  <label for="customBrands">Дополнительные "официальные" домены (по одному на строку)</label>
+  <textarea id="customBrands" placeholder="mybank.com&#10;mycompany.com"></textarea>
+  <p class="hint">Эти домены добавятся к встроенному списку известных сайтов для проверки на тайпсквоттинг.</p>
+
+  <button id="saveBtn">Сохранить</button>
+  <span id="status"></span>
+
+  <script src="options.js"></script>
+</body>
+</html>

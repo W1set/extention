@@ -1,0 +1,45 @@
+{
+  "manifest_version": 2,
+  "name": "Site Verdict — проверка сайтов",
+  "version": "1.0.0",
+  "description": "Показывает дату регистрации домена, репутацию сайта и общий вердикт безопасности при заходе на страницу.",
+
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "site-verdict@local.extension",
+      "strict_min_version": "78.0"
+    }
+  },
+
+  "permissions": [
+    "tabs",
+    "activeTab",
+    "storage",
+    "https://rdap.org/*",
+    "https://www.virustotal.com/*"
+  ],
+
+  "icons": {
+    "48": "icons/icon-48.png",
+    "96": "icons/icon-96.png"
+  },
+
+  "background": {
+    "scripts": ["analyzer.js", "background.js"],
+    "persistent": true
+  },
+
+  "browser_action": {
+    "default_icon": {
+      "48": "icons/icon-48.png",
+      "96": "icons/icon-96.png"
+    },
+    "default_title": "Site Verdict",
+    "default_popup": "popup.html"
+  },
+
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": false
+  }
+}
